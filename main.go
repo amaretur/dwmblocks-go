@@ -153,24 +153,65 @@ func setSignals(conf *config) {
 
 func main() {
 
-	homeDir, ok := os.LookupEnv("HOME")
-	if ! ok {   
-		log.Fatal("could not get the value of the environment variable $HOME")
-	} 
+	var path, pathToDefaultConfig string
 
-	var path string
+	homeDir := getHomeDir()
 
 	flag.StringVar(
 		&path, 
 		"c", 
 		homeDir + "/.config/dwmblocks/config.json", 
-		"Path to the configuration file")
+		"Path to the configuration file",
+	)
+	flag.StringVar(
+		&pathToDefaultConfig, 
+		"d", 
+		homeDir + "/.config/dwmblocks/config.json", 
+		"Create a default configuration file at the specified path",
+	)
 
 	flag.Parse()
-   
+
+	if contains(os.Args, "-d") {
+		createDefaultConfig(pathToDefaultConfig)
+		return
+	}
+
 	conf := getConfig(path)
 
 	initCache(conf)
 	setSignals(conf)
 	loop(conf) 
+}
+
+func createDefaultConfig(path string) {
+
+	conf := &config{
+		Blocks: []block{
+			block{
+				Command: "date +'Date: %d.%M.%Y'", 
+				Interval: 60,
+				Signal: 0,
+			},
+			block{
+				Command: "date +'Time: %H:%M'",
+				Interval: 2,
+				Signal: 0,
+			},
+		},
+		Separator: " | ",
+	}
+
+	f, err := os.Create(path)
+	if err != nil {
+		log.Fatalf("cannot create file with path (%s)", path)
+	}
+	defer f.Close()
+
+	data, err := json.MarshalIndent(conf, "", "	")
+	if err != nil {
+		log.Fatal(err)
+	}
+ 
+	f.Write(data)
 }
