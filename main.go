@@ -130,6 +130,12 @@ func setSignals(conf *config) {
 
 	// subscription to notifications about received signals
 	for i, item := range conf.Blocks {
+
+		// if the signal is zero - do not intercept it
+		if item.Signal == 0 {
+			continue
+		}
+
 		signal.Notify(c, syscall.Signal(item.Signal + MIN_SIG))
 		signalToBlock[item.Signal] = uint8(i)
 	}
@@ -156,7 +162,7 @@ func main() {
 
 	flag.StringVar(
 		&path, 
-		"config", 
+		"c", 
 		homeDir + "/.config/dwmblocks/config.json", 
 		"Path to the configuration file")
 
