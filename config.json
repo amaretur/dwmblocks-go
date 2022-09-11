@@ -1,0 +1,8 @@
+{
+	"blocks": [ 
+		{ "command": "date +'Date: %d.%M.%Y'",	"interval": 60,	"signal": 1 },
+		{ "command": "date +'Time: %H:%M'",		"interval": 2,	"signal": 2 }
+	],
+    
+	"separator": " | " 
+}
