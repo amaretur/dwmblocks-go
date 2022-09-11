@@ -12,11 +12,13 @@ import (
 	"encoding/json"
 )
 
-const MIN_SIG uint8 = 34
+const (
+	MIN_SIG uint8 = 34
 
-// line feed, LF — ASCII control character (0x0A, 
-// 10 in the decimal numeral system, '\n')
-const LF byte = byte(10)
+	// line feed, LF — ASCII control character (0x0A, 
+	// 10 in the decimal numeral system, '\n')
+	LF byte	= byte(10)
+)
 
 // structure describing the info block
 type block struct {
@@ -33,6 +35,7 @@ func (b *block) Cmd() string {
 		log.Fatal(err)
 	}
 
+	// cuts the '/n' (LF) character from the end of the line if it is there 
 	if out[len(out)-1] == LF {
 		out = out[0:len(out)-1]
 	}
